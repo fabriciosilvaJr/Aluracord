@@ -1,0 +1,8 @@
+{
+  "name": "aluracord",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/fabriciosilvaJr/Aluracord.git",
+  "author": "Fabrício Silva <fabriciosilva187@gmail.com>",
+  "license": "MIT"
+}
