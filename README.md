@@ -1,2 +1,2 @@
 # Aluracord
- Projeto criado na Imersão React
+ Projeto criado na Imersão React da Alura
