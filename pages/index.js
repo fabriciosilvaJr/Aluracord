@@ -31,13 +31,13 @@ function GlobalStyle() {
 
 function Titulo(props) {
   console.log(props)
-  const Tag = props.tag;
+  const Tag = props.tag || 'h1';
   return (
     <>
       <Tag>{props.children}</Tag>
       <style jsx>{`
         ${Tag} {
-                color: ${appConfig.theme.colors.neutrals['900']};
+                color: ${appConfig.theme.colors.neutrals['000']};
                 font-size: 24px;
                 font-weight: 600;
             }
@@ -67,7 +67,7 @@ function Titulo(props) {
 // export default HomePage
 
 export default function PaginaInicial() {
-  const username = 'peas';
+  const username = 'fabriciosilvaJr';
 
   return (
     <>
