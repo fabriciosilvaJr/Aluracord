@@ -110,7 +110,7 @@ export default function PaginaInicial() {
             <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
               {appConfig.name}
             </Text>
-           <input
+           {/* <input
              type="text"
              value={username}
              onChange={function (event){
@@ -123,9 +123,9 @@ export default function PaginaInicial() {
               setUsername(valor);
 
              }}
-             />
+             /> */}
 
-            {/* <TextField
+            <TextField
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -135,7 +135,7 @@ export default function PaginaInicial() {
                   backgroundColor: appConfig.theme.colors.neutrals[800],
                 },
               }}
-            /> */}
+            />
             <Button
               type='submit'
               label='Entrar'
