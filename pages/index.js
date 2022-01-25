@@ -1,5 +1,6 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from '../config.json';
+import React from 'react';
 function GlobalStyle() {
   return (
     <style global jsx>{`
@@ -66,8 +67,10 @@ function Titulo(props) {
 
 // export default HomePage
 
+
 export default function PaginaInicial() {
-  const username = 'fabriciosilvaJr';
+  const [username, setUsername] = React.useState('fabriciosilvaJr');
+
 
   return (
     <>
@@ -107,8 +110,22 @@ export default function PaginaInicial() {
             <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
               {appConfig.name}
             </Text>
+           <input
+             type="text"
+             value={username}
+             onChange={function (event){
 
-            <TextField
+
+              console.log('Usuário digitou', event.target.value)
+              //Onde ta o valor da variavel
+              const valor = event.target.value;
+              //Trocar o valor da variavel
+              setUsername(valor);
+
+             }}
+             />
+
+            {/* <TextField
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -118,7 +135,7 @@ export default function PaginaInicial() {
                   backgroundColor: appConfig.theme.colors.neutrals[800],
                 },
               }}
-            />
+            /> */}
             <Button
               type='submit'
               label='Entrar'
