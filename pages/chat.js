@@ -1,6 +1,15 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js'
+
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQwOTY4OSwiZXhwIjoxOTU4OTg1Njg5fQ.7tAD02BMVJLxBXaw1WUySQzi5hIXACNEscjx8PW1szg';
+const SUPABASE_URL = 'https://mlwzoaqisdgycoxyetym.supabase.co';
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+
 
 export default function ChatPage() {
 
@@ -21,17 +30,48 @@ export default function ChatPage() {
 
     //  */
 
+    React.useEffect(() => {
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', {ascending: false})
+            .then(({data}) => {
+
+                console.log('Dados da Consulta', data)
+                setListaDeMensagens(data);
+
+            })
+
+    }, []);
+
+
+
+
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: ListaDeMensagens.length + 1,
+            //id: ListaDeMensagens.length + 1,
             de: 'vanessametonini',
             texto: novaMensagem
         }
-        setListaDeMensagens([
-            mensagem,
-            ...ListaDeMensagens
 
-        ]);
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                mensagem
+            ])
+             .then(({data}) =>{
+                 console.log('Criando a mensagem: ', data);
+                 setListaDeMensagens([
+                    data[0],
+                    ...ListaDeMensagens
+        
+                ]);
+
+             })
+
+
+
+    
         setMensagem('');
     }
 
@@ -90,6 +130,13 @@ export default function ChatPage() {
                             display: 'flex',
                             alignItems: 'center',
                         }}
+                        onSubmit={function (infosDoEvento) {
+                            infosDoEvento.preventDefault();
+                            console.log('Alguém submeteu o form');
+                            handleNovaMensagem(mensagem);
+                            //window.location.href = '/chat'
+                        }}
+
                     >
                         <TextField
                             value={mensagem}
@@ -118,6 +165,21 @@ export default function ChatPage() {
                                 marginRight: '12px',
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
+                        />
+
+                        <Button
+                            type='submit'
+                            iconName="arrowRight" 
+                            styleSheet={{
+                                border: '0',
+                                resize: 'none',
+                                borderRadius: '5px',
+                                marginBottom: '5px',
+                               
+                                
+                               
+                            }}
+                            
                         />
                     </Box>
                 </Box>
@@ -185,7 +247,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/vanessametonini.png`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
                                 {mensagem.de}
