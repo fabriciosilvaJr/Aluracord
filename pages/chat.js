@@ -2,17 +2,37 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
 import { createClient } from '@supabase/supabase-js'
-
+import { useRouter } from 'next/router';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker'
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQwOTY4OSwiZXhwIjoxOTU4OTg1Njg5fQ.7tAD02BMVJLxBXaw1WUySQzi5hIXACNEscjx8PW1szg';
 const SUPABASE_URL = 'https://mlwzoaqisdgycoxyetym.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem){
+     supabaseClient
+        .from('mensagens')
+        .on('INSERT', (resposta) =>{
 
+          adicionaMensagem(resposta.new)
+        })
+        .subscribe();
+}
+
+// function escutaMensagensEmTempoReal(adicionaMensagem) {
+//     return supabaseClient
+//       .from('mensagens')
+//       .on('INSERT', (respostaLive) => {
+//         adicionaMensagem(respostaLive.new);
+//       })
+//       .subscribe();
+//   }
 
 
 export default function ChatPage() {
-
+    const roteamento = useRouter();
+    const usuarioLogado = roteamento.query.username;
+    console.log('Usuário Logado', usuarioLogado)
     const [mensagem, setMensagem] = React.useState('');
     const [ListaDeMensagens, setListaDeMensagens] = React.useState([]);
     /* 
@@ -34,13 +54,23 @@ export default function ChatPage() {
         supabaseClient
             .from('mensagens')
             .select('*')
-            .order('id', {ascending: false})
-            .then(({data}) => {
+            .order('id', { ascending: false })
+            .then(({ data }) => {
 
                 console.log('Dados da Consulta', data)
                 setListaDeMensagens(data);
 
             })
+            escutaMensagensEmTempoReal( (novaMensagem) =>{
+               // handleNovaMensagem(novaMensagem)
+                 setListaDeMensagens((valorAtualdaLista) =>{
+                     return [
+                        novaMensagem,
+                        ...valorAtualdaLista
+    
+                    ]
+                 });
+            });
 
     }, []);
 
@@ -50,7 +80,7 @@ export default function ChatPage() {
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             //id: ListaDeMensagens.length + 1,
-            de: 'vanessametonini',
+            de: usuarioLogado,
             texto: novaMensagem
         }
 
@@ -59,19 +89,15 @@ export default function ChatPage() {
             .insert([
                 mensagem
             ])
-             .then(({data}) =>{
-                 console.log('Criando a mensagem: ', data);
-                 setListaDeMensagens([
-                    data[0],
-                    ...ListaDeMensagens
-        
-                ]);
+            .then(({ data }) => {
+                console.log('Criando a mensagem: ', data);
+              
 
-             })
+            })
 
 
 
-    
+
         setMensagem('');
     }
 
@@ -166,20 +192,34 @@ export default function ChatPage() {
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
                         />
+                         {/* CallBack */}
+                        <ButtonSendSticker
+                            onStickerClick={ (sticker) => {
+                                console.log('Salva esse sticker no banco', sticker);
+                                handleNovaMensagem(':sticker:' + sticker)
+                            }}
+                         />
 
                         <Button
                             type='submit'
-                            iconName="arrowRight" 
+                            iconName="arrowRight"
                             styleSheet={{
-                                border: '0',
-                                resize: 'none',
-                                borderRadius: '5px',
-                                marginBottom: '5px',
-                               
-                                
-                               
+                                borderRadius: '50%',
+                                padding: '0 3px 0 0',
+                                minWidth: '50px',
+                                minHeight: '50px',
+                                fontSize: '20px',
+                                marginBottom: '8px',
+                                marginLeft: '7px',
+                                lineHeight: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+
+
+
                             }}
-                            
+
                         />
                     </Box>
                 </Box>
@@ -263,7 +303,15 @@ function MessageList(props) {
                                 {(new Date().toLocaleDateString())}
                             </Text>
                         </Box>
-                        {mensagem.texto}
+                        {/* Condicional:{mensagem.texto.startsWith(':sticker:').toString()} */}
+                        {mensagem.texto.startsWith(':sticker:') 
+                        ?(
+                            <Image src ={mensagem.texto.replace(':sticker:', '')}/>
+                        ): (
+                            mensagem.texto
+                        )}
+                        {/* {mensagem.texto} */}
+                      
                     </Text>
 
                 )
