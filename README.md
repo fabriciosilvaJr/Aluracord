@@ -1,4 +1,4 @@
 # Aluracord
 Projeto criado na Imersão React
 
-[Acesse](https://aluracord-kfhacpe3z-fabriciosilvajr.vercel.app)
+[Acesse](https://aluracord-fabriciosilvajr.vercel.app)
